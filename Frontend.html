@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Generator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="email"],
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .conditional-fields > div {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Email Generator</h1>
+    <div class="form-group">
+        <label for="email">Recipient's Email*</label>
+        <input type="email" id="email" placeholder="Enter recipient's email" required>
+        <div class="error" id="email-error"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="occasion">Occasion*</label>
+        <select id="occasion" required>
+            <option value="">Select an occasion</option>
+            <option value="birthday">Birthday</option>
+            <option value="leave">Leave Request</option>
+            <option value="alert">Alert</option>
+            <option value="festival">Festival Wishes</option>
+            <option value="holiday">Holiday</option>
+            <option value="announcement">Announcement</option>
+        </select>
+        <div class="error" id="occasion-error"></div>
+    </div>
+
+    <div id="conditional-fields" class="conditional-fields" style="display: none;">
+        <div id="leave-fields" style="display: none;">
+            <h3>Leave Request Details</h3>
+            <div class="form-group">
+                <label for="start-date">Start Date*</label>
+                <input type="date" id="start-date">
+                <div class="error" id="start-date-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="end-date">End Date*</label>
+                <input type="date" id="end-date">
+                <div class="error" id="end-date-error"></div>
+            </div>
+        </div>
+
+        <div id="festival-fields" style="display: none;">
+            <h3>Festival Wishes Details</h3>
+            <div class="form-group">
+                <label for="festival-name">Festival Name*</label>
+                <input type="text" id="festival-name" placeholder="Enter festival name">
+                <div class="error" id="festival-name-error"></div>
+            </div>
+        </div>
+
+        <div id="holiday-fields" style="display: none;">
+            <h3>Holiday Details</h3>
+            <div class="form-group">
+                <label for="holiday-start-date">Holiday Start Date*</label>
+                <input type="date" id="holiday-start-date">
+                <div class="error" id="holiday-start-date-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="holiday-end-date">Holiday End Date*</label>
+                <input type="date" id="holiday-end-date">
+                <div class="error" id="holiday-end-date-error"></div>
+            </div>
+        </div>
+
+        <div id="alert-fields" style="display: none;">
+            <h3>Alert Details</h3>
+            <div class="form-group">
+                <label for="alert-message">Alert Message*</label>
+                <textarea id="alert-message" placeholder="Enter alert message"></textarea>
+                <div class="error" id="alert-message-error"></div>
+            </div>
+        </div>
+
+        <div id="announcement-fields" style="display: none;">
+            <h3>Announcement Details</h3>
+            <div class="form-group">
+                <label for="announcement-details">Announcement Details*</label>
+                <textarea id="announcement-details" placeholder="Enter announcement details"></textarea>
+                <div class="error" id="announcement-details-error"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="sender-name">Your Name</label>
+        <input type="text" id="sender-name" placeholder="Enter your name">
+    </div>
+
+    <div class="form-group">
+        <label for="sender-email">Your Email*</label>
+        <input type="email" id="sender-email" placeholder="Enter your email" required>
+        <div class="error" id="sender-email-error"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="sender-password">Your Password*</label>
+        <input type="password" id="sender-password" placeholder="Enter your password" required>
+        <div class="error" id="sender-password-error"></div>
+    </div>
+
+    <button type="button" id="send-button">Send Email</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const occasionSelect = document.getElementById('occasion');
+            const conditionalFields = document.getElementById('conditional-fields');
+            const leaveFields = document.getElementById('leave-fields');
+            const festivalFields = document.getElementById('festival-fields');
+            const holidayFields = document.getElementById('holiday-fields');
+            const alertFields = document.getElementById('alert-fields');
+            const announcementFields = document.getElementById('announcement-fields');
+            const sendButton = document.getElementById('send-button');
+
+            occasionSelect.addEventListener('change', function() {
+                const selectedOccasion = this.value;
+                conditionalFields.style.display = selectedOccasion ? 'block' : 'none';
+                leaveFields.style.display = selectedOccasion === 'leave' ? 'block' : 'none';
+                festivalFields.style.display = selectedOccasion === 'festival' ? 'block' : 'none';
+                holidayFields.style.display = selectedOccasion === 'holiday' ? 'block' : 'none';
+                alertFields.style.display = selectedOccasion === 'alert' ? 'block' : 'none';
+                announcementFields.style.display = selectedOccasion === 'announcement' ? 'block' : 'none';
+
+                // Reset error messages when occasion changes
+                const errorDivs = conditionalFields.querySelectorAll('.error');
+                errorDivs.forEach(div => div.textContent = '');
+            });
+
+            sendButton.addEventListener('click', function() {
+                const recipientEmail = document.getElementById('email').value;
+                const occasion = occasionSelect.value;
+                const senderName = document.getElementById('sender-name').value;
+                const senderEmail = document.getElementById('sender-email').value;
+                const senderPassword = document.getElementById('sender-password').value;
+
+                const formData = {
+                    email: recipientEmail,
+                    occasion: occasion,
+                    senderName: senderName,
+                    senderEmail: senderEmail,
+                    senderPassword: senderPassword
+                };
+
+                // Gather conditional fields based on the selected occasion
+                if (occasion === 'leave') {
+                    formData.startDate = document.getElementById('start-date').value;
+                    formData.endDate = document.getElementById('end-date').value;
+                } else if (occasion === 'festival') {
+                    formData.festivalName = document.getElementById('festival-name').value;
+                } else if (occasion === 'holiday') {
+                    formData.holidayStartDate = document.getElementById('holiday-start-date').value;
+                    formData.holidayEndDate = document.getElementById('holiday-end-date').value;
+                } else if (occasion === 'alert') {
+                    formData.alertMessage = document.getElementById('alert-message').value;
+                } else if (occasion === 'announcement') {
+                    formData.announcementDetails = document.getElementById('announcement-details').value;
+                }
+
+                fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Email sent successfully!');
+                        // Optionally clear the form
+                        document.getElementById('email').value = '';
+                        occasionSelect.value = '';
+                        document.getElementById('sender-name').value = '';
+                        document.getElementById('sender-email').value = '';
+                        document.getElementById('sender-password').value = '';
+                        conditionalFields.style.display = 'none';
+                        const conditionalInputs = conditionalFields.querySelectorAll('input[type="text"], input[type="date"], textarea');
+                        conditionalInputs.forEach(input => input.value = '');
+                    } else if (data.errors) {
+                        // Display validation errors to the user
+                        console.error('Validation errors:', data.errors);
+                        for (const key in data.errors) {
+                            const errorDiv = document.getElementById(`${key}-error`);
+                            if (errorDiv) {
+                                errorDiv.textContent = data.errors[key];
+                            }
+                        }
+                    } else {
+                        alert('Failed to send email: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending email:', error);
+                    alert('An error occurred while sending the email.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
